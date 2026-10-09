@@ -28,9 +28,7 @@ module SpecialBuilder
     end
 
     def board_locals
-      {schedule: Schedule.new(from: week, weeks: WEEKS_SHOWN), collection: @collection,
-       library: @collection ? @collection.entries.order(:title).to_a : [],
-       can_write: Current.user.can?("special_builder:write")}
+      {schedule: Schedule.new(from: week, weeks: WEEKS_SHOWN), can_write: Current.user.can?("special_builder:write")}
     end
 
     def respond_with_board(kind, message)

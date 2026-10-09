@@ -9,10 +9,34 @@
   <% end %>
 <% end %>
 <%= render "layouts/shared/page_header", title: @page_title,
-      description: "Drag a special onto a day. A day under Every week runs it each week; a day of one week runs it that week only, and the site shows today's." %>
+      description: "Drag a special onto a day to run it that day; the site shows today's." %>
 
 <% if @collection %>
-  <%= render "special_builder/boards/board", **@board %>
+  <%# The drag-and-drop controller holds the list and the weeks; a drop replaces only the weeks (a
+      morph), so a search in the list stays as it was. %>
+  <div class="grid items-start gap-6 lg:grid-cols-4"
+       data-controller="special-builder--board"
+       data-special-builder--board-url-value="<%= special_builder_placements_path(week: week.iso8601) %>">
+    <aside class="<%= ui(:panel, "special-builder-library flex flex-col gap-3 p-4") %>">
+      <div class="flex items-baseline justify-between gap-2">
+        <h2 class="<%= ui(:heading) %>">Specials</h2>
+        <%= link_to "Add new", new_collection_entry_path(@collection.slug), class: ui(:link, "text-xs") %>
+      </div>
+      <form class="relative flex items-center" method="get" action="<%= special_builder_board_path %>" role="search"
+            data-turbo-frame="special_builder_library" data-action="input->special-builder--board#search">
+        <input type="hidden" name="week" value="<%= week.iso8601 %>">
+        <label class="sr-only" for="special_builder_q">Search specials</label>
+        <%= icon_tag "search", class: "absolute left-2.5 size-4 text-gray-400" %>
+        <input type="search" id="special_builder_q" name="q" value="<%= @query %>" class="w-full pl-8" placeholder="Search specials…"
+               autocomplete="off" autocorrect="off" data-1p-ignore="true">
+      </form>
+      <%= render "special_builder/boards/library", collection: @collection, library: @library, query: @query, can_write: @can_write %>
+    </aside>
+
+    <div class="lg:col-span-3">
+      <%= render "special_builder/boards/board", **@board %>
+    </div>
+  </div>
 <% else %>
   <p class="<%= ui(:notice, :yellow) %>">
     There's no “<%= SpecialBuilder.collection_slug %>” collection yet. Make one for the specials (a title, and a description and price if you like),

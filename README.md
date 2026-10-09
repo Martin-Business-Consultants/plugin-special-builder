@@ -1,7 +1,7 @@
 # Special Builder
 
-A builder for daily specials in the CMS. Drag a special onto a day: under **Every week** it runs that
-day each week; on a day of one week it runs that week only, and the site shows today's.
+A builder for daily specials in the CMS. Drag a special onto a day of the week-by-week builder and
+it runs that day; the site shows today's.
 
 A CMS plugin (`docs/plugins.md` in the CMS): a Rails engine that owns its `special_builder_*`
 tables, reaches the specials by id, and extends the core only through `Cms::Plugins`. Needs CMS
@@ -22,13 +22,15 @@ did.
 
 - **The specials** are the entries of a collection: `specials`, unless Settings › Special Builder
   names another. A special is whatever the collection holds (a title, a description, a price, an
-  image); the builder lists them all, drafts marked, with **Add new** for another.
-- **Every week**: Monday to Sunday. A special dropped on a day runs it every week.
-- **Week by week**: four weeks at a time (Earlier, This week, Later), today marked. A date runs
-  every week's lineup for its day (shown faded) until something is dropped on it, taken off it or
-  it's cleared: then it's **Changed** and runs its own specials, starting from every week's, so a
-  drop adds to the day rather than replacing it. **Reset** puts it back to every week's; **Clear**
-  leaves it with no special.
+  image). The list of them stays beside the builder, scrolling on its own, with a search box that
+  finds them as it's typed into (the CMS's search, so "gril" finds "Chicago Grille"), drafts
+  marked, and **Add new** for another.
+- **Week by week**: four weeks at a time (Earlier, This week, Later), each week's days two to a
+  row, today marked. A day runs its usual specials — each special's own `day`, taken when the
+  plugin was first switched on — shown faded, until something is dropped on it, taken off it or
+  it's cleared: then it's **Changed** and runs its own, starting from the usual ones, so a drop
+  adds to the day rather than replacing it. **Reset** puts it back to the usual; **Clear** leaves
+  it with no special.
 - **Moving**: drag a special from one day to another; × takes it off a day.
 - **The site** reads the schedule from the API and is rebuilt when it changes (the
   `specials.scheduled` event, which a webhook can hear too) and each Monday, so the weeks it was

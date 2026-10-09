@@ -1,71 +1,30 @@
-<%# locals: (schedule:, collection:, library:, can_write:) %>
-<%# The builder, replaced whole (a morph) after every drop: the specials to drag, every week's
-    lineup, and the weeks shown. special-builder--board posts a drop to placements. %>
-<div id="special_builder_board" class="grid items-start gap-6 lg:grid-cols-4"
-     data-controller="special-builder--board"
-     data-special-builder--board-url-value="<%= special_builder_placements_path(week: schedule.from.iso8601) %>">
-  <aside class="<%= ui(:panel, "space-y-3 p-4 lg:sticky top-4") %>">
-    <div class="flex items-baseline justify-between gap-2">
-      <h2 class="<%= ui(:heading) %>">Specials</h2>
-      <%= link_to "Add new", new_collection_entry_path(collection.slug), class: ui(:link, "text-xs") %>
+<%# locals: (schedule:, can_write:) %>
+<%# The weeks to drop specials on, replaced whole (a morph) after every drop. Each week's days run
+    two to a row. special-builder--board (around it) posts a drop to placements. %>
+<section id="special_builder_board" class="<%= ui(:panel, "space-y-4 p-4") %>">
+  <div class="flex flex-wrap items-center justify-between gap-2">
+    <div>
+      <h2 class="<%= ui(:heading) %>">Week by week</h2>
+      <p class="<%= ui(:help) %>"><%= schedule.from.strftime("%B %-d") %> – <%= schedule.to.strftime("%B %-d, %Y") %></p>
     </div>
-    <p class="<%= ui(:help) %>"><%= can_write ? "Drag one onto a day." : "Building the schedule needs the Specials write permission." %></p>
-    <% if library.any? %>
-      <ul class="space-y-2">
-        <% library.each do |entry| %>
-          <%# herb:key entry.id %>
-          <li>
-            <%= render "special_builder/boards/chip", entry: entry, can_write: can_write, week: schedule.from %>
-          </li>
-        <% end %>
-      </ul>
-    <% else %>
-      <p class="text-sm text-gray-500">No specials yet.</p>
-    <% end %>
-  </aside>
-
-  <div class="space-y-6 lg:col-span-3">
-    <section class="<%= ui(:panel, "space-y-3 p-4") %>">
-      <div>
-        <h2 class="<%= ui(:heading) %>">Every week</h2>
-        <p class="<%= ui(:help) %>">Each day's specials, week in, week out, unless a week's day says otherwise.</p>
-      </div>
-      <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-7">
-        <% SpecialBuilder::WEEKDAYS.each_with_index do |name, index| %>
-          <%# herb:key name %>
-          <% slot = SpecialBuilder::Slot.every(index + 1) %>
-          <%= render "special_builder/boards/cell", slot: slot, heading: name, entries: schedule.every_week[index + 1],
-                can_write: can_write, week: schedule.from %>
-        <% end %>
-      </div>
-    </section>
-
-    <section class="<%= ui(:panel, "space-y-4 p-4") %>">
-      <div class="flex flex-wrap items-center justify-between gap-2">
-        <div>
-          <h2 class="<%= ui(:heading) %>">Week by week</h2>
-          <p class="<%= ui(:help) %>"><%= schedule.from.strftime("%B %-d") %> – <%= schedule.to.strftime("%B %-d, %Y") %>. Drop on a day to change that week only.</p>
-        </div>
-        <div class="flex items-center gap-1">
-          <%= link_to "‹ Earlier", special_builder_board_path(week: (schedule.from - 7 * schedule.weeks).iso8601), class: ui(:button, :small) %>
-          <%= link_to "This week", special_builder_board_path, class: ui(:button, :small) %>
-          <%= link_to "Later ›", special_builder_board_path(week: (schedule.to + 1).iso8601), class: ui(:button, :small) %>
-        </div>
-      </div>
-      <% schedule.weeks_of_lineups.each do |lineups| %>
-        <%# herb:key lineups.first.date %>
-        <div class="space-y-2">
-          <h3 class="text-xs font-medium text-gray-500">Week of <%= lineups.first.date.strftime("%B %-d") %> · week <%= lineups.first.date.cweek %></h3>
-          <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-7">
-            <% lineups.each do |lineup| %>
-              <%# herb:key lineup.date %>
-              <%= render "special_builder/boards/cell", slot: SpecialBuilder::Slot.on(lineup.date),
-                    heading: lineup.date.strftime("%a %-d %b"), entries: lineup.entries, customised: lineup.customised,
-                    today: lineup.date == SpecialBuilder.today, can_write: can_write, week: schedule.from %>
-            <% end %>
-          </div>
-        </div>
-      <% end %>
-    </section>
+    <div class="flex items-center gap-1">
+      <%= link_to "‹ Earlier", special_builder_board_path(week: (schedule.from - 7 * schedule.weeks).iso8601), class: ui(:button, :small) %>
+      <%= link_to "This week", special_builder_board_path, class: ui(:button, :small) %>
+      <%= link_to "Later ›", special_builder_board_path(week: (schedule.to + 1).iso8601), class: ui(:button, :small) %>
+    </div>
   </div>
-</div>
+  <% schedule.weeks_of_lineups.each do |lineups| %>
+    <%# herb:key lineups.first.date %>
+    <div class="space-y-2">
+      <h3 class="text-xs font-medium text-gray-500">Week of <%= lineups.first.date.strftime("%B %-d") %> · week <%= lineups.first.date.cweek %></h3>
+      <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <% lineups.each do |lineup| %>
+          <%# herb:key lineup.date %>
+          <%= render "special_builder/boards/cell", slot: SpecialBuilder::Slot.on(lineup.date),
+                heading: lineup.date.strftime("%A %-d %B"), entries: lineup.entries, customised: lineup.customised,
+                today: lineup.date == SpecialBuilder.today, can_write: can_write, week: schedule.from %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</section>

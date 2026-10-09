@@ -23,8 +23,12 @@ Read first, in the CMS's repository: `docs/plugins.md` (every extension point) a
   `Day.customise`, `.clear`, `.reset` make a date different, empty, or every week's again.
 - `Schedule` reads a run of weeks in three queries (the API and the board); only the collection's
   specials count, and `published_only` for the site's token.
-- The board (`boards/_board`) is replaced whole by a Turbo Stream morph after each change; its
-  Stimulus controller (`special-builder--board`) posts a drop to placements with `entry_id`, the
-  slot and, for a move, `from[...]`.
+- The page (`boards/show`) holds the list (`boards/_library`, a Turbo Frame its search box fills
+  through `CollectionEntry.search_list`, ActiveSearch) and the weeks (`boards/_board`), which a
+  Turbo Stream morph replaces after each change, leaving the list and its search alone. The
+  Stimulus controller around both (`special-builder--board`) posts a drop to placements with
+  `entry_id`, the slot and, for a move, `from[...]`, and submits the search as it's typed.
+- Every week's lineup (weekly placements) has no screen of its own: it's each special's `day`,
+  imported on first switching on, and fills the days nobody has changed.
 - Each change is `Event.record`ed and announces `specials.scheduled` (a deploy event: the site
   rebuilds); the nightly task announces it on Mondays.

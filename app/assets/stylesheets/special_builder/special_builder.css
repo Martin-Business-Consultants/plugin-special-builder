@@ -1,6 +1,21 @@
 /* Special Builder: linked on every admin page while it's on (Cms::Plugins.stylesheet). The board
    is drawn with the admin's classes; this holds only what they can't say — a day's room to drop
    onto, and what a drag looks like. */
+/* The list of specials stays in view beside the weeks: below the admin bar, as tall as the
+   window leaves room for, its heading and search fixed and the specials scrolling on their own. */
+@media (min-width: 64rem) {
+  .special-builder-library {
+    max-height: calc(100dvh - 5rem);
+    position: sticky;
+    top: 4rem;
+  }
+
+  .special-builder-library__list {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+
 .special-builder-cell {
   min-height: 6rem;
   transition: box-shadow 120ms ease, border-color 120ms ease;

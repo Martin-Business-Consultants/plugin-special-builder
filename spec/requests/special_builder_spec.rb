@@ -56,7 +56,24 @@ RSpec.describe "The Special Builder plugin", type: :request do
       get special_builder_board_path
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("Chicago Grille", "Every week", "Week by week", "special-builder--board", "$12")
+      expect(response.body).to include("Chicago Grille", "Week by week", "special-builder--board", "special_builder_library", "$12")
+      expect(response.body).not_to include(">Every week<")
+    end
+
+    it "finds specials as the search box is typed into, short terms too" do
+      sign_in_as admin
+      library = -> { Nokogiri::HTML(response.body).at_css("turbo-frame#special_builder_library").text.squish }
+
+      get special_builder_board_path(q: "grill")
+      expect(library.call).to include("Chicago Grille")
+      expect(library.call).not_to include("Fish Tacos")
+
+      get special_builder_board_path(q: "ta")
+      expect(library.call).to include("Fish Tacos")
+      expect(library.call).not_to include("Old Burger")
+
+      get special_builder_board_path(q: "lobster")
+      expect(library.call).to include("No special matches “lobster”")
     end
 
     it "adds a special to every week, and to one week's day only" do

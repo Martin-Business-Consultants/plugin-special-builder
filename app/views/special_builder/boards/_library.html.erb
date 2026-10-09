@@ -1,0 +1,20 @@
+<%# locals: (collection:, library:, query:, can_write:) %>
+<%# The specials to drag, found by the search box above it (ActiveSearch, through the entries'
+    search_list) as it's typed into: this frame is what a search replaces. %>
+<%= turbo_frame_tag "special_builder_library", class: "special-builder-library__list flex min-h-0 flex-col gap-3" do %>
+  <p class="<%= ui(:help) %>"><%= can_write ? "Drag one onto a day." : "Building the schedule needs the Specials write permission." %></p>
+  <% if library.any? %>
+    <ul class="space-y-2">
+      <% library.each do |entry| %>
+        <%# herb:key entry.id %>
+        <li>
+          <%= render "special_builder/boards/chip", entry: entry, can_write: can_write, week: week %>
+        </li>
+      <% end %>
+    </ul>
+  <% elsif query.present? %>
+    <p class="text-sm text-gray-500">No special matches “<%= query %>”.</p>
+  <% else %>
+    <p class="text-sm text-gray-500">No specials yet. <%= link_to "Add one", new_collection_entry_path(collection.slug), class: ui(:link) %>.</p>
+  <% end %>
+<% end %>

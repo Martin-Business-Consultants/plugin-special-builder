@@ -49,6 +49,13 @@ export default class extends Controller {
     this.#clear()
   }
 
+  // The list's search box: search as it's typed into, once typing pauses.
+  search(event) {
+    clearTimeout(this.searchTimer)
+    const form = event.currentTarget
+    this.searchTimer = setTimeout(() => form.requestSubmit(), 200)
+  }
+
   #append(body, slot, scope) {
     Object.entries(slot).forEach(([ name, value ]) => body.append(scope ? `${scope}[${name}]` : name, value))
   }
