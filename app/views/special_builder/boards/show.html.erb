@@ -8,8 +8,7 @@
     <%= link_to "Settings", special_builder_settings_path, class: ui(:button) %>
   <% end %>
 <% end %>
-<%= render "layouts/shared/page_header", title: @page_title,
-      description: "Drag a special onto a day to run it that day; the site shows today's." %>
+<%= render "layouts/shared/page_header", title: @page_title %>
 
 <% if @collection %>
   <%# The drag-and-drop controller holds the list and the weeks; a drop replaces only the weeks (a
@@ -33,7 +32,9 @@
       <%= render "special_builder/boards/library", collection: @collection, library: @library, query: @query, can_write: @can_write %>
     </aside>
 
-    <div class="lg:col-span-3">
+    <%# The weeks scroll on their own (special-builder-weeks), so the page and the list stay put;
+        a drop morphs the board inside, and the scroll stays where it was. %>
+    <div class="special-builder-weeks lg:col-span-3">
       <%= render "special_builder/boards/board", **@board %>
     </div>
   </div>

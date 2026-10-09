@@ -1,6 +1,5 @@
 <% @page_title = "Special Builder" %>
-<%= render "layouts/shared/page_header", title: @page_title,
-      description: "Where the specials come from, and how far ahead the site is given them." %>
+<%= render "layouts/shared/page_header", title: @page_title %>
 
 <section class="<%= ui(:panel, "max-w-2xl p-6") %>">
   <%= form_with url: special_builder_settings_path, method: :patch, scope: :settings, class: "space-y-5" do |form| %>

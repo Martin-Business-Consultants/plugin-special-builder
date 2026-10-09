@@ -1,16 +1,19 @@
-/* Special Builder: linked on every admin page while it's on (Cms::Plugins.stylesheet). The board
-   is drawn with the admin's classes; this holds only what they can't say — a day's room to drop
-   onto, and what a drag looks like. */
-/* The list of specials stays in view beside the weeks: below the admin bar, as tall as the
-   window leaves room for, its heading and search fixed and the specials scrolling on their own. */
+/* Special Builder: linked on its own pages (Cms::Plugins.stylesheet). The board is drawn with
+   the admin's classes; this holds only what they can't say — the two columns' scrolling, a day's
+   room to drop onto, and what a drag looks like. */
+/* Both columns stay in view, below the admin bar and as tall as the window leaves room for, each
+   scrolling on its own: the list of specials (its heading and search fixed) and the weeks, whose
+   board a drop morphs in place, so neither moves the page or the other. */
 @media (min-width: 64rem) {
-  .special-builder-library {
+  .special-builder-library,
+  .special-builder-weeks {
     max-height: calc(100dvh - 5rem);
     position: sticky;
     top: 4rem;
   }
 
-  .special-builder-library__list {
+  .special-builder-library__list,
+  .special-builder-weeks {
     overflow-y: auto;
     overscroll-behavior: contain;
   }
