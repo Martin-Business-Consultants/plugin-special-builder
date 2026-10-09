@@ -1,0 +1,38 @@
+<%# locals: (slot:, heading:, entries:, can_write:, week:, customised: false, today: false) %>
+<%# A day to drop specials on: one of every week's, or a date. A date that runs every week's
+    lineup shows it faded; one made different says so and can go back. %>
+<div class="<%= class_names("special-builder-cell flex flex-col gap-2 rounded-lg border p-2",
+       "border-blue-500 bg-blue-50": today, "border-gray-200 bg-gray-50": !today) %>"
+     data-special-builder--board-target="cell"
+     data-slot="<%= slot.to_param.to_json %>"
+     data-action="dragover->special-builder--board#dragOver dragleave->special-builder--board#dragLeave drop->special-builder--board#drop">
+  <div class="flex items-baseline justify-between gap-1">
+    <span class="text-xs font-medium text-gray-900"><%= heading %></span>
+    <% if today %>
+      <span class="<%= ui(:badge, :blue) %>">Today</span>
+    <% elsif customised %>
+      <span class="<%= ui(:badge, :yellow) %>" title="This day runs its own specials, not every week's">Changed</span>
+    <% end %>
+  </div>
+  <% if entries.any? %>
+    <% entries.each do |entry| %>
+      <%# herb:key entry.id %>
+      <%= render "special_builder/boards/chip", entry: entry, slot: slot, can_write: can_write, week: week,
+            faded: !slot.weekly? && !customised %>
+    <% end %>
+  <% else %>
+    <p class="text-xs italic text-gray-500"><%= customised ? "No special" : "Nothing yet" %></p>
+  <% end %>
+  <% if can_write && !slot.weekly? %>
+    <div class="flex gap-2 text-xs">
+      <% if customised %>
+        <%= button_to "Reset", special_builder_day_path(slot.date.iso8601, week: week.iso8601), method: :delete,
+              class: ui(:link, "text-xs"), title: "Run every week's specials on this day again" %>
+      <% end %>
+      <% if entries.any? %>
+        <%= button_to "Clear", special_builder_days_path(date: slot.date.iso8601, week: week.iso8601),
+              class: ui(:link, "text-xs"), title: "No special on this day" %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

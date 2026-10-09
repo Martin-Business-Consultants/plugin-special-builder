@@ -1,0 +1,21 @@
+<% @page_title = "Special Builder" %>
+<%= render "layouts/shared/page_header", title: @page_title,
+      description: "Where the specials come from, and how far ahead the site is given them." %>
+
+<section class="<%= ui(:panel, "max-w-2xl p-6") %>">
+  <%= form_with url: special_builder_settings_path, method: :patch, scope: :settings, class: "space-y-5" do |form| %>
+    <div class="space-y-1">
+      <%= form.label :collection, "Collection of specials", class: ui(:label) %>
+      <%= form.select :collection, options_for_select(@collections, SpecialBuilder.collection_slug), {include_blank: @collections.none? { it.last == SpecialBuilder.collection_slug }} %>
+      <p class="<%= ui(:help) %>">Its entries are the specials the builder lists: a title, and whatever else the site shows (a description, a price, an image).</p>
+    </div>
+    <div class="space-y-1">
+      <%= form.label :weeks_ahead, "Weeks the site is given", class: ui(:label) %>
+      <%= form.number_field :weeks_ahead, value: SpecialBuilder.weeks_ahead, min: 1, max: 53, class: "w-24" %>
+      <p class="<%= ui(:help) %>">From the week it's built in. The site picks today's from them, and is rebuilt each Monday and whenever the schedule changes.</p>
+    </div>
+    <% if Current.user.can?("settings:write") %>
+      <button type="submit" class="<%= ui(:button, :primary) %>">Save</button>
+    <% end %>
+  <% end %>
+</section>

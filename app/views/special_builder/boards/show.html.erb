@@ -1,0 +1,21 @@
+<% @page_title = "Specials" %>
+
+<% content_for :page_actions do %>
+  <% if @collection %>
+    <%= link_to "All specials", collection_entries_path(@collection.slug), class: ui(:button) %>
+  <% end %>
+  <% if Current.user.can?("settings:read") %>
+    <%= link_to "Settings", special_builder_settings_path, class: ui(:button) %>
+  <% end %>
+<% end %>
+<%= render "layouts/shared/page_header", title: @page_title,
+      description: "Drag a special onto a day. A day under Every week runs it each week; a day of one week runs it that week only, and the site shows today's." %>
+
+<% if @collection %>
+  <%= render "special_builder/boards/board", **@board %>
+<% else %>
+  <p class="<%= ui(:notice, :yellow) %>">
+    There's no “<%= SpecialBuilder.collection_slug %>” collection yet. Make one for the specials (a title, and a description and price if you like),
+    or pick the collection that holds them in <%= link_to "Settings", special_builder_settings_path, class: ui(:link) %>.
+  </p>
+<% end %>

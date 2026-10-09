@@ -1,0 +1,21 @@
+/* Special Builder: linked on every admin page while it's on (Cms::Plugins.stylesheet). The board
+   is drawn with the admin's classes; this holds only what they can't say — a day's room to drop
+   onto, and what a drag looks like. */
+.special-builder-cell {
+  min-height: 6rem;
+  transition: box-shadow 120ms ease, border-color 120ms ease;
+}
+
+.special-builder-cell--over {
+  border-color: var(--color-blue-500);
+  box-shadow: 0 0 0 2px var(--color-blue-500);
+}
+
+/* A special picked up to drag: its words shouldn't be selected instead. */
+.special-builder-chip {
+  user-select: none;
+}
+
+.special-builder-chip--dragging {
+  opacity: 0.4;
+}
